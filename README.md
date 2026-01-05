@@ -2,7 +2,7 @@
 
 A production-ready microservices architecture built with Node.js, demonstrating modern DevOps practices including containerization, CI/CD, and Kubernetes orchestration.
 
-## 🏗️ Architecture
+##  Architecture
 
 This project consists of three microservices:
 
@@ -10,7 +10,7 @@ This project consists of three microservices:
 - **Auth Service** (Port 3001) - User authentication and JWT token management
 - **Backend Service** (Port 3002) - Sample business logic and data processing
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -64,7 +64,7 @@ kubectl get services
 kubectl port-forward service/api-gateway 3000:3000
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 .
@@ -88,7 +88,7 @@ kubectl port-forward service/api-gateway 3000:3000
 └── README.md
 ```
 
-## 🔧 DevOps Features
+## DevOps Features
 
 ### Containerization
 - Multi-stage Docker builds for optimized image sizes
@@ -108,7 +108,7 @@ kubectl port-forward service/api-gateway 3000:3000
 - Resource limits and requests
 - Liveness and readiness probes
 
-## 🔐 API Endpoints
+## API Endpoints
 
 ### API Gateway (http://localhost:3000)
 - `GET /health` - Health check
@@ -125,7 +125,7 @@ kubectl port-forward service/api-gateway 3000:3000
 - `GET /api/data` - Get sample data (requires auth)
 - `POST /api/data` - Create sample data (requires auth)
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run tests for all services
@@ -135,13 +135,13 @@ npm run test:all
 cd api-gateway && npm test
 ```
 
-## 📊 Monitoring
+## Monitoring
 
 - Health check endpoints for all services
 - Structured logging with Winston
 - Request/response logging middleware
 
-## 🔄 CI/CD Pipeline
+## CI/CD Pipeline
 
 Each service has its own Jenkinsfile that:
 1. Checks out code
@@ -152,7 +152,7 @@ Each service has its own Jenkinsfile that:
 6. Pushes to registry
 7. Deploys to Kubernetes
 
-## 📝 Environment Variables
+## Environment Variables
 
 Create `.env` files in each service directory:
 
