@@ -1,16 +1,24 @@
-# Node.js Microservices Template - DevOps Showcase
+# Node.js Microservices Template
 
-A production-ready microservices architecture built with Node.js, demonstrating modern DevOps practices including containerization, CI/CD, and Kubernetes orchestration.
+A simple microservices architecture built with Node.js, demonstrating DevOps practices including Docker containerization, CI/CD with Jenkins, and Kubernetes deployment.
 
-##  Architecture
+## Architecture
 
-This project consists of three microservices:
+This project contains three microservices:
 
 - **API Gateway** (Port 3000) - Entry point, request routing, and load balancing
 - **Auth Service** (Port 3001) - User authentication and JWT token management
 - **Backend Service** (Port 3002) - Sample business logic and data processing
 
-##  Quick Start
+## Tech Stack
+
+- Node.js + Express
+- Docker & Docker Compose
+- Kubernetes
+- Jenkins CI/CD
+- JWT Authentication
+
+## Getting Started
 
 ### Prerequisites
 
@@ -23,45 +31,85 @@ This project consists of three microservices:
 
 ```bash
 # Install dependencies for all services
-npm run install:all
+cd auth-service && npm install && cd ..
+cd backend-service && npm install && cd ..
+cd api-gateway && npm install && cd ..
 
-# Run all services locally
-npm run dev:all
-
-# Or run individual services
-cd api-gateway && npm run dev
+# Start each service (in separate terminals)
 cd auth-service && npm run dev
 cd backend-service && npm run dev
+cd api-gateway && npm run dev
 ```
 
-### Docker Deployment
+### Quick Start with Docker Compose
 
 ```bash
-# Build all images
-docker-compose build
-
-# Run all services
+# Start all services
 docker-compose up -d
+
+# Check status
+docker-compose ps
 
 # View logs
 docker-compose logs -f
 
-# Stop all services
+# Stop services
 docker-compose down
 ```
+
+Services will be available at:
+- API Gateway: http://localhost:3000
+- Auth Service: http://localhost:3001
+- Backend Service: http://localhost:3002
 
 ### Kubernetes Deployment
 
 ```bash
-# Apply all deployments
-kubectl apply -f k8s/
+# Deploy all services
+kubectl apply -f k8s/deployment.yaml
 
-# Check status
-kubectl get pods
-kubectl get services
+# Check deployment status
+kubectl get pods -n microservices
+kubectl get services -n microservices
 
-# Access services
-kubectl port-forward service/api-gateway 3000:3000
+# Access API Gateway
+kubectl port-forward -n microservices service/api-gateway 3000:80
+```
+
+## API Usage
+
+### Register a User
+
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","email":"test@example.com","password":"password123"}'
+```
+
+### Login
+
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","password":"password123"}'
+```
+
+Save the token from the response.
+
+### Create Data (requires authentication)
+
+```bash
+curl -X POST http://localhost:3000/api/backend/data \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -d '{"title":"Test Item","description":"Sample data"}'
+```
+
+### Get All Data
+
+```bash
+curl http://localhost:3000/api/backend/data \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ## Project Structure
@@ -78,104 +126,44 @@ kubectl port-forward service/api-gateway 3000:3000
 │   ├── Dockerfile
 │   ├── Jenkinsfile
 │   └── k8s-deploy.yaml
-├── backend-service/      # Backend business logic
+├── backend-service/      # Backend service
 │   ├── src/
 │   ├── Dockerfile
 │   ├── Jenkinsfile
 │   └── k8s-deploy.yaml
 ├── k8s/                  # Kubernetes manifests
-├── docker-compose.yml    # Docker Compose configuration
-└── README.md
+│   └── deployment.yaml
+└── docker-compose.yml
 ```
 
 ## DevOps Features
 
-### Containerization
-- Multi-stage Docker builds for optimized image sizes
-- Docker Compose for local orchestration
-- Health checks and proper signal handling
-
-### CI/CD
-- Jenkins pipelines for each service
-- Automated testing and linting
-- Docker image building and pushing
-- Kubernetes deployment automation
+### Docker
+- Multi-stage builds for smaller images
+- Health checks
+- Non-root user execution
+- Alpine Linux base images
 
 ### Kubernetes
-- Deployment manifests with replica sets
-- Service discovery and load balancing
-- ConfigMaps and Secrets management
-- Resource limits and requests
+- Deployments with multiple replicas
+- ConfigMaps and Secrets
 - Liveness and readiness probes
+- Resource limits
+- Service discovery
 
-## API Endpoints
+### CI/CD (Jenkins)
+Each service has a Jenkinsfile that:
+1. Runs tests and linting
+2. Builds Docker image
+3. Pushes to registry
+4. Deploys to Kubernetes
 
-### API Gateway (http://localhost:3000)
-- `GET /health` - Health check
-- `POST /api/auth/*` - Proxy to auth service
-- `GET /api/backend/*` - Proxy to backend service
+## Configuration
 
-### Auth Service (http://localhost:3001)
-- `POST /auth/register` - Register new user
-- `POST /auth/login` - Login and get JWT token
-- `GET /auth/verify` - Verify JWT token
+Each service uses environment variables. Copy `.env.example` to `.env` in each service directory and update as needed.
 
-### Backend Service (http://localhost:3002)
-- `GET /health` - Health check
-- `GET /api/data` - Get sample data (requires auth)
-- `POST /api/data` - Create sample data (requires auth)
+**Important**: Change the JWT_SECRET in production!
 
-## Testing
+## License
 
-```bash
-# Run tests for all services
-npm run test:all
-
-# Run tests for individual service
-cd api-gateway && npm test
-```
-
-## Monitoring
-
-- Health check endpoints for all services
-- Structured logging with Winston
-- Request/response logging middleware
-
-## CI/CD Pipeline
-
-Each service has its own Jenkinsfile that:
-1. Checks out code
-2. Installs dependencies
-3. Runs linting
-4. Runs tests
-5. Builds Docker image
-6. Pushes to registry
-7. Deploys to Kubernetes
-
-## Environment Variables
-
-Create `.env` files in each service directory:
-
-```env
-# Auth Service
-PORT=3001
-JWT_SECRET=your-secret-key
-JWT_EXPIRY=24h
-
-# Backend Service
-PORT=3002
-AUTH_SERVICE_URL=http://auth-service:3001
-
-# API Gateway
-PORT=3000
-AUTH_SERVICE_URL=http://auth-service:3001
-BACKEND_SERVICE_URL=http://backend-service:3002
-```
-
-## 🤝 Contributing
-
-This is a template project for showcasing DevOps practices. Feel free to fork and customize for your needs.
-
-## 📄 License
-
-MIT License
+MIT
