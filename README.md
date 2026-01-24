@@ -13,9 +13,6 @@ This project contains three microservices:
 ## Tech Stack
 
 - Node.js + Express
-- Docker & Docker Compose
-- Kubernetes
-- Jenkins CI/CD
 - JWT Authentication
 
 ## Getting Started
@@ -23,9 +20,6 @@ This project contains three microservices:
 ### Prerequisites
 
 - Node.js 18+
-- Docker & Docker Compose
-- Kubernetes cluster (optional, for K8s deployment)
-- Jenkins (optional, for CI/CD)
 
 ### Local Development
 
@@ -41,40 +35,10 @@ cd backend-service && npm run dev
 cd api-gateway && npm run dev
 ```
 
-### Quick Start with Docker Compose
-
-```bash
-# Start all services
-docker-compose up -d
-
-# Check status
-docker-compose ps
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-```
-
 Services will be available at:
 - API Gateway: http://localhost:3000
 - Auth Service: http://localhost:3001
 - Backend Service: http://localhost:3002
-
-### Kubernetes Deployment
-
-```bash
-# Deploy all services
-kubectl apply -f k8s/deployment.yaml
-
-# Check deployment status
-kubectl get pods -n microservices
-kubectl get services -n microservices
-
-# Access API Gateway
-kubectl port-forward -n microservices service/api-gateway 3000:80
-```
 
 ## API Usage
 
@@ -111,52 +75,6 @@ curl -X POST http://localhost:3000/api/backend/data \
 curl http://localhost:3000/api/backend/data \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
-
-## Project Structure
-
-```
-.
-├── api-gateway/          # API Gateway service
-│   ├── src/
-│   ├── Dockerfile
-│   ├── Jenkinsfile
-│   └── k8s-deploy.yaml
-├── auth-service/         # Authentication service
-│   ├── src/
-│   ├── Dockerfile
-│   ├── Jenkinsfile
-│   └── k8s-deploy.yaml
-├── backend-service/      # Backend service
-│   ├── src/
-│   ├── Dockerfile
-│   ├── Jenkinsfile
-│   └── k8s-deploy.yaml
-├── k8s/                  # Kubernetes manifests
-│   └── deployment.yaml
-└── docker-compose.yml
-```
-
-## DevOps Features
-
-### Docker
-- Multi-stage builds for smaller images
-- Health checks
-- Non-root user execution
-- Alpine Linux base images
-
-### Kubernetes
-- Deployments with multiple replicas
-- ConfigMaps and Secrets
-- Liveness and readiness probes
-- Resource limits
-- Service discovery
-
-### CI/CD (Jenkins)
-Each service has a Jenkinsfile that:
-1. Runs tests and linting
-2. Builds Docker image
-3. Pushes to registry
-4. Deploys to Kubernetes
 
 ## Configuration
 
