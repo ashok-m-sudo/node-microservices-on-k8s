@@ -16,10 +16,14 @@ exports.setupProxies = (app) => {
             '^/api/auth': '/auth'
         },
         onProxyReq: (proxyReq, req, res) => {
-            logger.info(`Proxying to auth-service: ${req.method} ${req.path}`);
+            const targetPath = req.path.replace('/api/auth', '/auth');
+            logger.info(`[PROXY] ${req.method} ${req.path} -> ${AUTH_SERVICE_URL}${targetPath}`);
+        },
+        onProxyRes: (proxyRes, req, res) => {
+            logger.info(`[PROXY] Response from auth-service: ${proxyRes.statusCode} for ${req.method} ${req.path}`);
         },
         onError: (err, req, res) => {
-            logger.error(`Proxy error (auth-service): ${err.message}`);
+            logger.error(`[PROXY ERROR] Auth-service: ${err.message}`);
             res.status(503).json({
                 error: 'Auth service unavailable',
                 message: err.message
