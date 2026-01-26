@@ -40,28 +40,44 @@ Services will be available at:
 - Auth Service: http://localhost:3001
 - Backend Service: http://localhost:3002
 
-## API Usage
+## Testing the APIs
 
-### Register a User
+Quick test commands to verify the services are running:
 
+### 1. Register a User
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username":"testuser","email":"test@example.com","password":"password123"}'
 ```
+**Response:**
+```json
+{
+  "message": "User registered successfully",
+  "username": "testuser",
+  "email": "test@example.com"
+}
+```
 
-### Login
-
+### 2. Login
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"testuser","password":"password123"}'
 ```
+**Response:**
+```json
+{
+  "message": "Login successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "username": "testuser",
+    "email": "test@example.com"
+  }
+}
+```
 
-Save the token from the response.
-
-### Create Data (requires authentication)
-
+### 3. Create Data (use token from login)
 ```bash
 curl -X POST http://localhost:3000/api/backend/data \
   -H "Content-Type: application/json" \
@@ -69,8 +85,7 @@ curl -X POST http://localhost:3000/api/backend/data \
   -d '{"title":"Test Item","description":"Sample data"}'
 ```
 
-### Get All Data
-
+### 4. Get Data
 ```bash
 curl http://localhost:3000/api/backend/data \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
