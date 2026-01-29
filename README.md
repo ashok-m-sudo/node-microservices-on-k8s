@@ -14,12 +14,14 @@ This project contains three microservices:
 
 - Node.js + Express
 - JWT Authentication
+- Docker & Docker Compose
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
+- Docker & Docker Compose
 
 ### Local Development
 
@@ -90,6 +92,14 @@ curl -X POST http://localhost:3000/api/backend/data \
 curl http://localhost:3000/api/backend/data \
   -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
+
+## DevOps Features
+
+### Docker
+- Multi-stage builds for smaller images
+- Health checks
+- Non-root user execution
+- Alpine Linux base images
 
 ## Configuration
 
