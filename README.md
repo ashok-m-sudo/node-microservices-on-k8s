@@ -42,6 +42,41 @@ Services will be available at:
 - Auth Service: http://localhost:3001
 - Backend Service: http://localhost:3002
 
+### Docker Deployment
+
+**Using Docker Compose (Recommended):**
+
+```bash
+# Build and start all services
+docker compose up -d --build
+
+# View logs
+docker compose logs -f
+
+# Stop and remove containers
+docker compose down
+```
+
+**Using Docker Build (Individual Services):**
+
+```bash
+# Build images
+docker build -t auth-service:latest ./auth-service
+docker build -t backend-service:latest ./backend-service
+docker build -t api-gateway:latest ./api-gateway
+
+# Create network and run containers
+docker network create microservices-network
+docker run -d --name auth-service --network microservices-network -p 3001:3001 auth-service:latest
+docker run -d --name backend-service --network microservices-network -p 3002:3002 backend-service:latest
+docker run -d --name api-gateway --network microservices-network -p 3000:3000 api-gateway:latest
+```
+
+Services will be available at:
+- API Gateway: http://localhost:3000
+- Auth Service: http://localhost:3001
+- Backend Service: http://localhost:3002
+
 ## Testing the APIs
 
 Quick test commands to verify the services are running:
