@@ -61,15 +61,35 @@ docker compose down
 
 ```bash
 # Build images
+docker build -t api-gateway:latest ./api-gateway
 docker build -t auth-service:latest ./auth-service
 docker build -t backend-service:latest ./backend-service
-docker build -t api-gateway:latest ./api-gateway
 
 # Create network and run containers
 docker network create microservices-network
-docker run -d --name auth-service --network microservices-network -p 3001:3001 auth-service:latest
-docker run -d --name backend-service --network microservices-network -p 3002:3002 backend-service:latest
-docker run -d --name api-gateway --network microservices-network -p 3000:3000 api-gateway:latest
+
+# Run auth service
+docker run -d --name auth-service --network microservices-network -p 3001:3001 \
+  -e NODE_ENV=development \
+  -e PORT=3001 \
+  -e JWT_SECRET=your-super-secret-jwt-key \
+  -e JWT_EXPIRY=24h \
+  auth-service:latest
+
+# Run backend service
+docker run -d --name backend-service --network microservices-network -p 3002:3002 \
+  -e NODE_ENV=development \
+  -e PORT=3002 \
+  -e AUTH_SERVICE_URL=http://auth-service:3001 \
+  backend-service:latest
+
+# Run API gateway
+docker run -d --name api-gateway --network microservices-network -p 3000:3000 \
+  -e NODE_ENV=development \
+  -e PORT=3000 \
+  -e AUTH_SERVICE_URL=http://auth-service:3001 \
+  -e BACKEND_SERVICE_URL=http://backend-service:3002 \
+  api-gateway:latest
 ```
 
 Services will be available at:
