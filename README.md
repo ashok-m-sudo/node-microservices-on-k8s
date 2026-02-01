@@ -91,12 +91,6 @@ docker run -d --name api-gateway --network microservices-network -p 3000:3000 \
   -e BACKEND_SERVICE_URL=http://backend-service:3002 \
   api-gateway:latest
 ```
-
-Services will be available at:
-- API Gateway: http://localhost:3000
-- Auth Service: http://localhost:3001
-- Backend Service: http://localhost:3002
-
 ## Testing the APIs
 
 Quick test commands to verify the services are running:
