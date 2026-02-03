@@ -15,6 +15,7 @@ This project contains three microservices:
 - Node.js + Express
 - JWT Authentication
 - Docker & Docker Compose
+- Kubernetes
 
 ## Getting Started
 
@@ -22,6 +23,7 @@ This project contains three microservices:
 
 - Node.js 18+
 - Docker & Docker Compose
+- Kubernetes cluster (optional, for K8s deployment)
 
 ### Local Development
 
@@ -91,6 +93,21 @@ docker run -d --name api-gateway --network microservices-network -p 3000:3000 \
   -e BACKEND_SERVICE_URL=http://backend-service:3002 \
   api-gateway:latest
 ```
+
+### Kubernetes Deployment
+
+```bash
+# Deploy all services
+kubectl apply -f k8s/deployment.yaml
+
+# Check deployment status
+kubectl get pods -n microservices
+kubectl get services -n microservices
+
+# Access API Gateway
+kubectl port-forward -n microservices service/api-gateway 3000:80
+```
+
 ## Testing the APIs
 
 Quick test commands to verify the services are running:
