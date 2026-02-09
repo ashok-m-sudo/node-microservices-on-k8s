@@ -19,6 +19,9 @@ This project consists of three microservices:
 - JWT Authentication
 - Docker & Docker Compose
 - Kubernetes
+- Jenkins CI/CD
+- GitHub Actions
+- GitHub Container Registry (GHCR)
 
 ---
 
@@ -29,6 +32,8 @@ This project consists of three microservices:
 - Node.js 18+
 - Docker & Docker Compose
 - Kubernetes cluster (optional, for K8s deployment)
+- Jenkins (optional, for CI/CD)
+- GitHub Actions (optional, for CI/CD)
 
 ###  Local Development (Node.js)
 
@@ -161,6 +166,14 @@ curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username":"testuser","email":"test@example.com","password":"password123"}'
 ```
+**Response:**
+```json
+{
+  "message": "User registered successfully",
+  "username": "testuser",
+  "email": "test@example.com"
+}
+```
 
 **2. Login**
 ```bash
@@ -168,6 +181,38 @@ curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"testuser","password":"password123"}'
 ```
+**Response:**
+```json
+{
+  "message": "Login successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "username": "testuser",
+    "email": "test@example.com"
+  }
+}
+```
+
+### 3. Create Data (use token from login)
+```bash
+curl -X POST http://localhost:3000/api/backend/data \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -d '{"title":"Test Item","description":"Sample data"}'
+```
+
+### 4. Get Data
+```bash
+curl http://localhost:3000/api/backend/data \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+---
+
+## Configuration
+
+Each service uses environment variables. Copy `.env.example` to `.env` in each service directory and update as needed.
+
+**Important**: Change the JWT_SECRET in production!
 
 ---
 
