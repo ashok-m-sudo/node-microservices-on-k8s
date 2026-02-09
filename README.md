@@ -1,14 +1,17 @@
-# Node.js Microservices Template
+# Node.js Microservices on Kubernetes
 
-A simple microservices architecture built with Node.js, demonstrating DevOps practices including Docker containerization, CI/CD with Jenkins, and Kubernetes deployment.
+A complete microservices architecture template demonstrating **Local Development**, **Docker Compose**, **Kubernetes (K8s)**, and **CI/CD** pipelines with **Jenkins** & **GitHub Actions**.
 
-## Architecture
+Built with industry-standard practices using **GitHub Container Registry (GHCR)**.
 
-This project contains three microservices:
+---
 
-- **API Gateway** (Port 3000) - Entry point, request routing, and load balancing
-- **Auth Service** (Port 3001) - User authentication and JWT token management
-- **Backend Service** (Port 3002) - Sample business logic and data processing
+##  Architecture
+
+This project consists of three microservices:
+1.  **API Gateway** (`:3000`): Entry point, request routing, and load balancing.
+2.  **Auth Service** (`:3001`): User registration and JWT authentication.
+3.  **Backend Service** (`:3002`): Business logic and data processing.
 
 ## Tech Stack
 
@@ -17,7 +20,9 @@ This project contains three microservices:
 - Docker & Docker Compose
 - Kubernetes
 
-## Getting Started
+---
+
+##  Getting Started
 
 ### Prerequisites
 
@@ -25,26 +30,33 @@ This project contains three microservices:
 - Docker & Docker Compose
 - Kubernetes cluster (optional, for K8s deployment)
 
-### Local Development
+###  Local Development (Node.js)
+
+Run each service individually for development and debugging.
 
 ```bash
-# Install dependencies for all services
-cd auth-service && npm install && cd ..
-cd backend-service && npm install && cd ..
-cd api-gateway && npm install && cd ..
+# Install dependencies
+cd auth-service && npm install
+cd backend-service && npm install
+cd api-gateway && npm install
 
-# Start each service (in separate terminals)
+# Start services (run in separate terminals)
+# Terminal 1
 cd auth-service && npm run dev
+
+# Terminal 2
 cd backend-service && npm run dev
+
+# Terminal 3
 cd api-gateway && npm run dev
 ```
+**Access:** `http://localhost:3000`
 
-Services will be available at:
-- API Gateway: http://localhost:3000
-- Auth Service: http://localhost:3001
-- Backend Service: http://localhost:3002
+---
 
-### Docker Deployment
+### Docker Deployment 
+
+The easiest way to run the entire stack locally.
 
 **Using Docker Compose (Recommended):**
 
@@ -93,86 +105,72 @@ docker run -d --name api-gateway --network microservices-network -p 3000:3000 \
   -e BACKEND_SERVICE_URL=http://backend-service:3002 \
   api-gateway:latest
 ```
+**Access:** `http://localhost:3000`
 
-### Kubernetes Deployment
+---
 
-```bash
-# Deploy all services
-kubectl apply -f k8s/deployment.yaml
+### Kubernetes Deployment (Production-Ready)
 
-# Check deployment status
-kubectl get pods -n microservices
-kubectl get services -n microservices
+This project simulates a real-world production setup using **GHCR** for images and **Kustomize** for configuration.
 
-# Access API Gateway
-kubectl port-forward -n microservices service/api-gateway 3000:80
-```
+**👉 See the [Detailed Kubernetes Guide](k8s/README.md) for full setup instructions.**
 
-## Testing the APIs
+#### Quick Start:
+1.  **Build & Push Images:**
+    ```bash
+    # Login to GHCR first! (See k8s/README.md for token instructions)
+    export GITHUB_TOKEN=your_token
+    ./scripts/build-and-push.sh --username YOUR_GITHUB_USERNAME
+    ```
 
-Quick test commands to verify the services are running:
+2.  **Deploy to Cluster:**
+    ```bash
+    # Update k8s/kustomization.yaml with your username first!
+    kubectl apply -k k8s/
+    ```
 
-### 1. Register a User
+3.  **Access the Application:**
+    In a real cluster, you'd use an Ingress. For local testing (Minikube/Kind), use port-forwarding:
+    ```bash
+    kubectl port-forward -n microservices svc/api-gateway 3000:3000
+    ```
+    **Visit:** `http://localhost:3000`
+
+---
+
+## CI/CD Pipelines
+
+### GitHub Actions
+Automatically builds and pushes docker images to GHCR on every push to the `main` branch.
+- Config file: `.github/workflows/docker-build-push.yml`
+
+### Jenkins
+A production-ready `Jenkinsfile` is included for automated deployments.
+- Pipeline steps: Checkout -> Build -> Push to GHCR -> Deploy to K8s.
+- **Setup:** Create a pipeline job and point it to this repo.
+
+---
+
+## Testing the API
+
+You can test the API using `curl` or Postman on `http://localhost:3000`.
+
+**1. Register User**
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username":"testuser","email":"test@example.com","password":"password123"}'
 ```
-**Response:**
-```json
-{
-  "message": "User registered successfully",
-  "username": "testuser",
-  "email": "test@example.com"
-}
-```
 
-### 2. Login
+**2. Login**
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"testuser","password":"password123"}'
 ```
-**Response:**
-```json
-{
-  "message": "Login successful",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "user": {
-    "username": "testuser",
-    "email": "test@example.com"
-  }
-}
-```
 
-### 3. Create Data (use token from login)
-```bash
-curl -X POST http://localhost:3000/api/backend/data \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
-  -d '{"title":"Test Item","description":"Sample data"}'
-```
+---
 
-### 4. Get Data
-```bash
-curl http://localhost:3000/api/backend/data \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE"
-```
-
-## DevOps Features
-
-### Docker
-- Multi-stage builds for smaller images
-- Health checks
-- Non-root user execution
-- Alpine Linux base images
-
-## Configuration
-
-Each service uses environment variables. Copy `.env.example` to `.env` in each service directory and update as needed.
-
-**Important**: Change the JWT_SECRET in production!
-
-## License
+## 📝 License
 
 MIT
